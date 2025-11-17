@@ -1,0 +1,115 @@
+curl -XGET 127.0.0.1:9200/movies/_mapping?pretty
+
+// Create a new indext & same time create a new mapping with date type other than strict date time format
+
+// THis is new index
+curl -XPUT 127.0.0.1:9200/movies_v2 -d '
+{
+    "mappings" : {
+      "properties" : {
+        "genre" : {
+          "type" : "keyword"
+        },
+        "id" : {
+          "type" : "integer"
+        },
+        "title" : {
+          "type" : "text",
+          "analyzer" : "english"
+        },
+        "year" : {
+          "type" : "integer"
+        }
+      }
+    }
+}
+'
+/usr/bin/curl  -H "Content-Type: application/x-ndjson" -XPUT 127.0.0.1:9200/_bulk?pretty --data-binary @movies_v2.json
+
+curl -XGET 'localhost:9200/movies_v2/_search?q=+year>2010+title:trek&pretty'
+
+curl -XGET 'localhost:9200/movies_v2/_search?q=+year>2017+title:trek&pretty'
+
+
+// Verfify in the query block for a search value trek
+curl -XGET "127.0.0.1:9200/movies_v2/_search?pretty" -d'
+{
+  "query" : {
+    "bool": {
+      "must": {"term": {"title": "trek"}},
+      "filter": {"range": {"year": {"gt": 2010}}}
+    }
+  }
+}'
+// Next we are seraching with gte 2012
+curl -XGET "127.0.0.1:9200/movies_v2/_search?pretty" -d'
+{
+  "query" : {
+    "bool": {
+      "must": {"term": {"title": "trek"}},
+      "filter": {"range": {"year": {"gte": 2012}}}
+    }
+  }
+}'
+// Next we are seraching with greater than gt 2016
+curl -XGET "127.0.0.1:9200/movies_v2/_search?pretty" -d'
+{
+  "query" : {
+    "bool": {
+      "must": {"term": {"title": "trek"}},
+      "filter": {"range": {"year": {"gt": 2016}}}
+    }
+  }
+}'
+
+// Next we are seraching with greater than equal gte 2016
+curl -XGET "127.0.0.1:9200/movies_v2/_search?pretty" -d'
+{
+  "query" : {
+    "bool": {
+      "must": {"term": {"title": "trek"}},
+      "filter": {"range": {"year": {"gt": 2016}}}
+    }
+  }
+}'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+curl -XGET "127.0.0.1:9200/movies/_search?pretty" -d'
+{
+  "query" : {
+    "bool": {
+      "must": {"term": {"title.keyword": "trek"}},
+      "filter": {"range": {"year": {"gte": 2010}}}
+    }
+  }
+}
+'
+curl -XGET "127.0.0.1:9200/movies_v2/_search?pretty" -d'
+{
+  "query" : {
+    "bool": {
+      "must": {"term": {"title.keyword": "trek"}},
+      "filter": {"range": {"year": {"gte": 2010}}}
+    }
+  }
+}
+'

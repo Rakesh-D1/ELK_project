@@ -1,0 +1,91 @@
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": "star wars"
+    }
+  }
+}'
+Matc phrase in caps 
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": "STAR WARS"
+    }
+  }
+}'
+//Mix of phrasase
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": "StaR wARs"
+    }
+  }
+}'
+// Query phrase in a match block
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": "Star Beyond"
+    }
+  }
+}'
+
+// If the query text has some words in between use slop e.g in Star trek Beyond the word trek is in between Star and Beyond
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": {"query": "Star Beyond", "slop": 1}
+    }
+  }
+}'
+// Another example of slop e.g  "Plan 9 from Outer Space" movie name use slop in this
+
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": {"query": "Plan Outer Space", "slop": 2}
+    }
+  }
+}'
+
+// this e.g wont give the result, since more than 2 words are in between
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": {"query": "Plan Space", "slop": 2}
+    }
+  }
+}'
+
+// reversal phrase with slop e.g Space Plan
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase": {
+      "title": {"query": "Space Plan", "slop": 5}
+    }
+  }
+}'
+
+// Identify a condition where the movie is release after 1980 & has the phrase star wars in the title
+
+// SIngle line query
+curl -XGET 'localhost:9200/movies/_search?q=+year>1980+title:star%20wars&pretty'    
+
+// Json block query
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "bool": {
+      "must": {"match_phrase": {"title": "star wars"}},
+      "filter": {"range": {"year": {"gt": 1980}}}
+    }
+  }
+}'  

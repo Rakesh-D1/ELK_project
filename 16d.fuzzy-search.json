@@ -1,0 +1,49 @@
+
+// This will show result due to no spelling mistake
+curl -XGET "127.0.0.1:9200/movies/_search?pretty" -d '
+{
+    "query": {
+        "match": {
+            "title": "Interstellar"
+        }
+    }
+
+}'
+// it wont return result "Intersteller" due to No fuzzy search is used for spelling mistake
+curl -XGET "127.0.0.1:9200/movies/_search?pretty" -d '
+{
+    "query": {
+        "match": {
+            "title": "Intersteller"
+        }
+    }
+
+}'
+
+// Now search with the fuzzy search for spelling mistake
+curl -XGET "127.0.0.1:9200/movies/_search?pretty" -d '
+{
+    "query": {
+        "fuzzy": {
+            "title": {
+                "value": "Intersteller",
+                "fuzziness": 2
+            }
+        }
+    }
+
+}'
+
+curl -XGET "127.0.0.1:9200/movies/_search?pretty" -d '
+{
+    "query": {
+        "fuzzy": {
+            "title": {
+                "value": "Intersteller",
+                "fuzziness": "AUTO"
+            }
+        }
+    }
+
+}'
+

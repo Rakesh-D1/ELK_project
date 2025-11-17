@@ -1,0 +1,14 @@
+//Normal search qury with more than a line command
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match": {
+      "title": "star"
+    }
+  }
+}'
+//Querylite search with a single line command
+curl -XGET 'localhost:9200/movies/_search?q=title:star&pretty'
+//sEARCH A MOVIE AFTER A PURTICULAR YEAR OR FOR E.G AFTER 2010 SHOW ALL MOVIES & IN TITLE TREK KEYWORD SHOULD BE THERE
+curl -XGET 'localhost:9200/movies/_search?q=+year>2010+title:trek&pretty'
+

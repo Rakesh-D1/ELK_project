@@ -1,0 +1,11 @@
+curl -XGET "localhost:9200/_cat/indices?v"  // it will list all indices in the cluster
+
+curl -XGET "127.0.0.1:9200/_cat/indices?h=index"  // it will list only indices in a cluster
+
+curl -XGET "127.0.0.1:9200/_cat/indices?h=index,docs.count" // it will list only indices with count of documents
+
+curl -XGET "127.0.0.1:9200/series/_mapping?pretty"  // it will show mapping of index series 
+
+curl "127.0.0.1:9200/series/_mapping?pretty" >  series-index-mapping.json    // backup of a index & mapping in ES
+
+curl -XPUT "127.0.0.1:9200/stored-index" @series-index-mapping.json  // Create a new index with a stored mapping in local system series-index-mapping.json

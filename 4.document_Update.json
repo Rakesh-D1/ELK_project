@@ -1,0 +1,32 @@
+curl -XGET 127.0.0.1:9200/movies/_search?pretty
+
+curl -XGET 127.0.0.1:9200/movies/_doc/109487?pretty
+
+// Update a exiting document in Movies index with the Movies ID
+
+curl -XPUT 127.0.0.1:9200/movies/_doc/109487?pretty -d '
+{
+    "genre": ["IAMX" , "Sci-Fi"],
+    "title": "Interstellar part 2",
+    "year": 2014
+}'   // Once u update the existing document the Version of the document will Increament by 1 for e.g it was 1 it will change to 2
+
+
+curl -XPUT 127.0.0.1:9200/movies/_doc/109487?pretty -d '
+{
+    "genre": ["IAMX" , "Sci-Fi"],
+    "title": "Interstellar",
+    "year": 2014
+}'  // Once u update the existing document the Version of the document will Increament by 1 for e.g it was 2 it will change to 3
+
+// Instead of Document now use the update commnand
+curl -XPOST 127.0.0.1:9200/movies/_doc/109487?pretty -d '
+{
+    "doc": {
+        "year": 2019
+    }
+}'  
+
+// Delete once document from the Movies Index
+
+curl -XDELETE 127.0.0.1:9200/movies/_doc/109487?

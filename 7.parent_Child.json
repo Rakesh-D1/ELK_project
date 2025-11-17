@@ -1,0 +1,28 @@
+curl -XPUT 127.0.0.1:9200/series -d '
+{
+    "mappings": {
+        "properties":{
+            "film_to_franchise": {
+                "type": "join",
+                "relations": {"franchise": "film"}
+            }
+        }
+    }
+}
+'
+/usr/bin/curl -H "Content-Type: application/x-ndjson" -XPUT 127.0.0.1/_bulk?pretty --data-binary 
+
+curl -XGET 127.0.0.1:9200/series/_search?pretty -d '
+{
+    "query": {
+        "has_parent": {
+            "parent_type": "franchise", 
+            "query": {
+                "match": {
+                    "title": "Star Wars"
+                }
+            }
+        }
+    }
+}
+'

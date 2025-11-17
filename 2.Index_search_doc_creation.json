@@ -1,0 +1,19 @@
+curl -XGET 127.0.0.1:9200/movies/_search?pretty
+
+
+//Add a doc in the movie index as interstellar 
+curl -XPUT 127.0.0.1:9200/movies/_doc/109487?pretty -d '
+{
+    "genre": ["IAMX" , "Sci-Fi"],
+    "title": "Interstellar",
+    "year": 2014
+}
+'
+
+//Post creation of doucment in movies index serch that doc
+
+curl -XGET 127.0.0.1:9200/movies/_search?pretty
+
+//Command to serach a purticular doc in movie index.
+
+curl -XPUT 127.0.0.1:9200/movies/_doc/109487?pretty

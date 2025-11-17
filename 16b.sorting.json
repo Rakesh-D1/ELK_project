@@ -1,0 +1,24 @@
+// Create a mapping for new index with type as keyword
+
+curl -XPUT 127.0.0.1:9200/movies/ -d ' 
+{
+    "mappings": {
+        "properties": {
+            "title": {
+                "type": "text",
+                "fields": {
+                    "raw": {
+                        "type": "keyword"
+                    }
+                }
+            }
+        }
+    }
+}
+'
+
+curl -XPUT 127.0.0.1:9200/_bulk --data-binary @movies.json
+
+
+curl -XGET "127.0.0.1:9200/movies/_search?sort=title.raw&pretty"
+

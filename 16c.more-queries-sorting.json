@@ -1,0 +1,25 @@
+
+// Search for a movie in the "Sci-Fi" genre, released between 2010 and 2015, excluding any titles containing "trek"
+curl -XGET "127.0.0.1:9200/movies/_search?pretty" -d '
+{
+    "query": {
+        "bool": {
+            "must": {"match": {"genre": "Sci-Fi"}},
+            "must_not": {"match": {"title": "trek"}},
+            "filter": {"range": {"year": {"gte": 2010, "lte": 2015}}}
+        }
+    }
+
+}'
+
+// Search for a movie in the "Sci-Fi" genre, released between 2010 and 2015
+curl -XGET "127.0.0.1:9200/movies/_search?pretty" -d '
+{
+    "query": {
+        "bool": {
+            "must": {"match": {"genre": "Sci-Fi"}},
+            "filter": {"range": {"year": {"gte": 2010, "lte": 2015}}}
+        }
+    }
+
+}'

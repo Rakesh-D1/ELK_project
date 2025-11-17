@@ -1,0 +1,81 @@
+curl --location --request PUT "localhost:9200/microservice-logs/_settings" --data-raw '
+{ 
+    "index.mapping.ignore_malformed": true
+}'
+
+
+curl  --request POST "localhost:9200/microservice-logs/_open
+
+curl  --request POST "localhost:9200/microservice-logs/_search?pretty=true"
+
+
+curl -XPOST "localhost:9200/microservice-logs/_doc/" -d '
+{
+    "timestamp": "2023-10-01T12:00:00Z", "service": "auth-service", "host_ip": "10.2.1.23", "port": "none", "message": "Invalid data type value"
+
+}'
+
+// Check the created document with mapping ignore_malformed set to true
+
+curl  --request GET "localhost:9200/microservice-logs/_doc/lJ3RiZkB2TSfk2Qzht_-?pretty"
+
+//Empty port
+
+curl -XPOST "localhost:9200/microservice-logs/_doc/" -d '
+{
+    "timestamp": "2023-10-01T12:00:00Z", "service": "auth-service", "host_ip": "10.2.1.23", "port": "", "message": "Empty port"
+
+}'
+
+curl  --request GET "localhost:9200/microservice-logs/_search?pretty=true"
+
+// Adding a new field "payload" which is not defined in the mapping
+
+curl -XPOST "localhost:9200/microservice-logs/_doc/" -d '
+{
+    "timestamp": "2023-10-01T12:00:00Z", "service": "auth-service", "host_ip": "10.2.1.23", "port": "", "message": "Additional field", "payload": "additional data"
+
+}'
+
+curl -XGET "localhost:9200/microservice-logs/_doc/xSWOi5kBE8-zXhhJctyC?pretty"
+
+curl -XGET "localhost:9200/microservice-logs/_mappings?pretty"
+
+
+// CLose the ignore_malformed in mapping
+
+curl -XPOST "localhost:9200/microservice-logs/_close"
+curl -XGET "localhost:9200/_cat/indices?v"
+
+curl --location --request PUT "localhost:9200/microservice-logs/_settings" --data-raw '
+{ 
+    "index.mapping.ignore_malformed": false
+}'
+
+curl -XPOST "localhost:9200/microservice-logs/_open"
+
+curl -XGET "localhost:9200/_cat/indices?v"
+
+==============================================================================================
+// With a jq file add 1000 documents to test the mapping explosion//
+
+// In this code we have added 1001 data in a file with the help of this code
+
+thousandsone_fields_json=$(echo {1..1001..1} | jq -Rn '(  input | split(" ")) as $nums | $nums[] | . as $key | [{key:($key|tostring),value:($key|tonumber)}] | from_entries' | jq -cs 'add')
+
+# Create a index which can pull data from the file
+
+curl -XPUT "localhost:9200/big-objects"
+
+curl -XPOST "localhost:9200/big-objects/_doc?pretty" -d "thousandsone_fields_json"
+
+// To resolve the issue now mark the ignore_malformed to true, before that close the index
+
+curl -XPOST "localhost:9200/big-objects/_close"
+
+curl --location --request PUT "localhost:9200/big-objects/_settings" --data-raw '
+{ 
+    "index.mapping.total_fields.limit": 1001
+}'
+
+curl -XPOST "localhost:9200/big-objects/_open"

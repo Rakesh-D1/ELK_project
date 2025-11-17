@@ -1,0 +1,20 @@
+// Query time search-as-you-type example ...Practically when we do the google search it shows the suggestions as we type each character
+// Here we will use match_phrase_prefix query to achieve this functionality
+
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase_prefix": {
+      "title": {"query": "Star", "slop": 4}
+    }
+  }
+}'
+
+curl -XGET 'localhost:9200/movies/_search?pretty' -d '
+{
+  "query": {
+    "match_phrase_prefix": {
+      "title": {"query": "Star t", "slop": 4}
+    }
+  }
+}'

@@ -1,0 +1,34 @@
+curl --request PUT 'localhost:9200/microservice-logs' --data-raw '
+{
+    "mappings":{
+        "properties": {
+            "timestamp": { "type": "date" },
+            "service": { "type": "keyword" },
+            "host_ip": { "type": "ip" },
+            "port": { "type": "integer" },
+            "message": { "type": "text" }
+        }
+    }
+}
+'
+
+curl -XPOST "localhost:9200/microservice-logs/_doc/" -d '
+{
+    "timestamp": "2023-10-01T12:00:00Z", "service": "auth-service", "host_ip": "10.2.1.22", "port": "8080", "message": "User login successful"
+
+}'
+
+curl -XPOST "localhost:9200/microservice-logs/_doc/" -d '
+{
+    "timestamp": "2023-10-01T12:00:00Z", "service": "auth-service", "host_ip": "10.2.1.22", "port": 8082, "message": "User login successful"
+
+}'
+
+curl -XPOST "localhost:9200/microservice-logs/_doc/" -d '
+{
+    "timestamp": "2023-10-01T12:00:00Z", "service": "auth-service", "host_ip": "10.2.1.22", "port": "none", "message": "Invalid data type value"
+
+}'
+
+//Close a Index
+curl -XPOST "localhost:9200/microservice-logs/_close"

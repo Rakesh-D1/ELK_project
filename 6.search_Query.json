@@ -1,0 +1,54 @@
+// Partial text search for any data
+curl -XGET 127.0.0.1:9200/movies/_search?pretty -d '{
+    "query":{
+        "match":{
+             "title": "Star Trek"
+        }
+    }  
+}'
+
+curl -XGET 127.0.0.1:9200/movies/_search?pretty -d '{
+    "query":{
+        "match":{
+             "genre": "Sci"
+        }
+    }  
+}'
+
+// EExaact match need in the result 
+
+/// First delete the existing mapping 
+curl -XDELETE 127.0.0.1:9200/movies/
+
+// Create a mapping with the genre as Keyword for unique 
+
+curl -XPUT 127.0.0.1:9200/movies -d '
+{
+    "mappings": {
+        "properties": {
+            "id": {"type": "integer"} ,
+            "year": {"type": "date"},
+            "genre": {"type": "keyword"},
+            "title": {"type": "text", "analyzer": "english"}
+        }
+    }
+}
+'
+curl -XGET 127.0.0.1:9200/movies/_search?pretty
+
+//Seearch the genre value with Sci-Fi keyword
+curl -XGET 127.0.0.1:9200/movies/_search?pretty -d '{
+    "query":{
+        "match":{
+             "genre": "Sci-Fi"
+        }
+    }  
+}'
+
+curl -XGET 127.0.0.1:9200/movies/_search?pretty -d '{
+    "query":{
+        "match":{
+             "title": "Star Wars"
+        }
+    }  
+}'

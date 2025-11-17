@@ -1,0 +1,29 @@
+curl -XDELETE 'localhost:9200/movies?pretty'
+
+curl -XPUT 'localhost:9200/movies?pretty' -d '
+{   
+    "settings": {
+        "analysis": {
+            "fliter": {
+                "autocomplete_filter": {
+                    "type": "edge_ngram",
+                    "min_gram": 2,
+                    "max_gram": 20
+                }
+
+            },
+            "analyzer": {
+                "autocomplete": {
+                    "type": "custom",
+                    "tokenizer": "standard",
+                    "filter": [
+                        "lowercase",
+                        "autocomplete_filter"
+                    ]
+                }
+            }
+        }
+    }
+}
+'
+

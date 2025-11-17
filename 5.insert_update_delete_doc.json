@@ -1,0 +1,17 @@
+// Insert a document
+
+curl -XPUT 127.0.0.1:9200/movies/_doc/109489?pretty -d '
+{
+    "genre": ["IAMX" , "Sci-Fi"],
+    "title": "Interstellar part 3",
+    "year": 2014
+}' 
+
+
+// Update a document 
+curl -XPOST 127.0.0.1:9200/movies/_doc/109489?pretty -d '
+{
+    "genre": ["IAMX" , "Sci-Fi"],
+    "title": "Interstellar part 3",
+    "year": 2020
+}'

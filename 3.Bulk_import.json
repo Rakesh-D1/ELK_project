@@ -1,0 +1,3 @@
+/usr/bin/curl -H "Content-Type:application/x-ndjson" -XPUT localhost:9200/_bulk?pretty --data-binary @movies.json
+
+curl -XGET 127.0.0.1:9200/movies/_search?pretty
