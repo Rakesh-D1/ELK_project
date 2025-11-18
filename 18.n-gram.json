@@ -1,29 +1,57 @@
 curl -XDELETE 'localhost:9200/movies?pretty'
 
-curl -XPUT 'localhost:9200/movies?pretty' -d '
-{   
+// Create a index with custom analyzer  & custom filter
+
+curl -XPUT '127.0.0.1:9200/movies?pretty' -d '
+{
     "settings": {
         "analysis": {
-            "fliter": {
+            "filter": {
                 "autocomplete_filter": {
                     "type": "edge_ngram",
-                    "min_gram": 2,
+                    "min_gram": 1,
                     "max_gram": 20
                 }
-
             },
             "analyzer": {
                 "autocomplete": {
                     "type": "custom",
                     "tokenizer": "standard",
-                    "filter": [
-                        "lowercase",
-                        "autocomplete_filter"
-                    ]
+                    "filter": [ "lowercase", "autocomplete_filter" ]
                 }
             }
         }
     }
-}
-'
+}'
 
+// Vrify the custom analyzer is working
+curl -XGET '127.0.0.1:9200/movies/_analyze?pretty' -d '
+{
+    "analyzer": "autocomplete",
+    "text": "sta"
+}'
+
+//Create the mapping for the Index with custom analyzer
+curl -XPUT '127.0.0.1:9200/movies/_mapping?pretty' -d '
+{
+    "properties": {
+        "title": {
+            "type": "text",
+            "analyzer": "autocomplete"
+        }
+    }
+}'
+
+curl -XPUT '127.0.0.1:9200/_bulk?pretty' --data-binary @movies.json
+
+curl -XGET 127.0.0.1:9200/movies/_search?pretty -d '
+{
+    "query": {
+        "match": {
+            "title": {
+                "query": "sta",
+                "analyzer": "standard"
+            }
+        }
+    }
+}'
