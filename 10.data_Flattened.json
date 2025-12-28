@@ -1,6 +1,8 @@
 curl -Xput "localhost:9200/demo-flattened"
 
 //Here we have declared the host field as flattened type
+//It was introduced mainly to solve mapping explosion problems.
+
 curl -XPUT "localhost:9200/demo-flattened/_mapping" -d '
 {
   "properties": {
